@@ -170,17 +170,19 @@ OBJS += cpu/$(CPU)/resetvec.o
 endif
 
 LIBS  = lib_generic/libgeneric.a
+LIBS += common/libcommon.a
 LIBS += board/$(BOARDDIR)/lib$(BOARD).a
 LIBS += cpu/$(CPU)/lib$(CPU).a
 ifdef SOC
 LIBS += cpu/$(CPU)/$(SOC)/lib$(SOC).a
 endif
 LIBS += lib_$(ARCH)/lib$(ARCH).a
+LIBS += drivers/libdrivers.a
 LIBS += net/libnet.a
 
 LIBS += rtc/librtc.a
+LIBS += httpd/libhttpd.a
 #LIBS += dtt/libdtt.a
-LIBS += drivers/libdrivers.a
 
 ifdef RALINK_USB
 LIBS += fs/fat/libfat.a
@@ -1719,7 +1721,7 @@ clean:
 	rm -f tools/mpc86x_clk tools/ncb
 	rm -f tools/easylogo/easylogo tools/bmp_logo
 	rm -f tools/gdb/astest tools/gdb/gdbcont tools/gdb/gdbsend
-	rm -f tools/env/fw_printenv tools/env/fw_setenv
+#	rm -f tools/env/fw_printenv tools/env/fw_setenv
 	rm -f board/cray/L1/bootscript.c board/cray/L1/bootscript.image
 	rm -f board/trab/trab_fkt
 	rm -f stage1/stage2.bin stage1/stage1n2.elf stage1/stage1n2.map

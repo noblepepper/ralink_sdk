@@ -26,7 +26,7 @@ include $(TOPDIR)/config.mk
 LIB	= lib$(BOARD).a
 
 
-OBJS	= $(BOARD).o serial.o 
+OBJS	= $(BOARD).o serial.o flash.o
 ifeq ($(CFG_ENV_IS), IN_FLASH)
 OBJS	+= flash.o 
 endif
