@@ -16,3 +16,5 @@ Stevenylai and Ralink who are responsible for the GitHub project this is forked 
 
 Manfeel whose blog gave me very helpful hints about byte order. I wish I had found this much earlier in my work since I duplicate much of his other work the hard way.
 http://blog.csdn.net/manfeel/article/details/13096075
+
+And of course Vonger who gave us the VoCore
