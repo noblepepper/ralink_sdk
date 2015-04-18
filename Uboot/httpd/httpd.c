@@ -47,8 +47,7 @@ static int webfailsafe_post_done = 0;
 static int webfailsafe_upload_failed = 0;
 static int data_start_found = 0;
 
-static unsigned char post_packet_counter = 0;
-
+static unsigned int post_packet_counter = 0;
 // 0x0D -> CR 0x0A -> LF
 static char eol[3] = { 0x0d, 0x0a, 0x00 };
 static char eol2[5] = { 0x0d, 0x0a, 0x0d, 0x0a, 0x00 };
@@ -70,20 +69,15 @@ ulong lastsize =0x0;
 
 // print downloading progress
 static void httpd_download_progress(void){
-	if(post_packet_counter == 39){
+	if(post_packet_counter == 390){
 		puts("\n         ");
 		post_packet_counter = 0;
 	}
 
-	//puts("#xxxxxx");
-	puts("#");
+	if (post_packet_counter % 10 == 0){
+		puts("#");
+	}
 	milisecdelay(10);
-	//post_packet_counter++;
-	//post_packet_counter++;
-	//post_packet_counter++;
-	//post_packet_counter++;
-	//post_packet_counter++;
-	//post_packet_counter++;
 	post_packet_counter++;
 
 }
@@ -466,10 +460,10 @@ void httpd_appcall(void){
 						uip_abort();
 						return;
 					} else {
-						printf("WEB Data will be downloaded at 0x%08X in RAM\n", WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
+						//printf("WEB Data will be downloaded at 0x%08X in RAM\n", WEBFAILSAFE_UPLOAD_RAM_ADDRESS);
 						printf("web Data will be downloaded at 0x%08X in RAM\n", webfailsafe_data_pointer);
-						printf("long Data will be downloaded at 0x%lx in RAM\n", tmp_long_address);
-						printf("int will be downloaded at 0x%lx in RAM\n", tmp_int_address);
+						//printf("long Data will be downloaded at 0x%lx in RAM\n", tmp_long_address);
+						//printf("int will be downloaded at 0x%lx in RAM\n", tmp_int_address);
 					}
 				
 
@@ -569,58 +563,38 @@ void httpd_appcall(void){
 					}
 //printf("+");
 					httpd_download_progress();
-if (hs->upload > lastsize){
+/*if (hs->upload > lastsize){
 	lastsize += 0x50000;
 	printf("\nupload size: 0x%8X, expected size: 0x%8X \n", (ulong)hs->upload, (ulong)hs->upload_total);
 	printf("\nwriting at: 0x%8X \n", webfailsafe_data_pointer);
-}
+}*/
 					// if we have collected all data
 					if(hs->upload >= hs->upload_total){
-
-printf("all data collected");
-
-					
+						printf("all data collected");
 						printf("\n\n");
-
 						// end of post upload
 						webfailsafe_post_done = 1;
 						NetBootFileXferSize = (ulong)hs->upload_total;
-printf("upload size: 0x%8X, expected size: 0x%8X \n", (ulong)hs->upload, (ulong)hs->upload_total);
+						printf("upload size: 0x%8X, expected size: 0x%8X \n", (ulong)hs->upload, (ulong)hs->upload_total);
 
-/*
-+upload size: 0x  37DE15, expected size: 0x  380004 
-+upload size: 0x  37E3BB, expected size: 0x  380004 
-+upload size: 0x  37E961, expected size: 0x  380004 
-+upload size: 0x  37EF07, expected size: 0x  380004 
-+upload size: 0x  37F4AD, expected size: 0x  380004 
-+upload size: 0x  37FA53, expected size: 0x  380004 
-+upload size: 0x  37FFF9, expected size: 0x  380004 
-+upload size: 0x  380032, expected size: 0x  380004 
-all data collected
-
-upload size: 0x  380032, expected size: 0x  380004 
-
-
-
-*/
 						// which website will be returned
 						if(!webfailsafe_upload_failed){
 							printf("upload good\n");
-printf("ask for file %s \n", file_flashing_html.name);
+							printf("ask for file %s \n", file_flashing_html.name);
 							fs_open(file_flashing_html.name, &fsfile);
 						} else {
 							printf("upload failed\n");
 							fs_open(file_fail_html.name, &fsfile);
 						}
-printf("state reset\n");
+						printf("state reset\n");
 						httpd_state_reset();
-printf("state reset successful\n");
+						printf("state reset successful\n");
 							
 						hs->state = STATE_FILE_REQUEST;
 						hs->dataptr = (u8_t *)fsfile.data;
 						hs->upload = fsfile.len;
 
-printf("sending result page\n");
+						printf("sending result page\n");
 						uip_send(hs->dataptr, (hs->upload > uip_mss() ? uip_mss() : hs->upload));
 					}
 

@@ -285,7 +285,7 @@ static struct chip_info chips_data [] = {
 	{ "EN25Q64",            0x1c, 0x30171c30, 64 * 1024, 128,  0 },
 	{ "W25Q32BV",		0xef, 0x40160000, 64 * 1024, 64,  0 }, //S25FL032K
 	{ "W25Q64BV",		0xef, 0x40170000, 64 * 1024, 128,  0 }, //S25FL064K
-	{ "W25Q128BV",		0xef, 0x40180000, 64 * 1024, 256,  0 }, //S25FL064K
+	{ "W25Q128BV",		0xef, 0x40180000, 64 * 1024, 256,  0 }, 
 };
 
 static int raspi_cmd(const u8 cmd, const u32 addr, const u8 mode, u8 *buf, const size_t n_buf, const u32 user, const int flag)

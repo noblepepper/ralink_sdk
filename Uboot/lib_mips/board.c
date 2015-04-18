@@ -34,7 +34,7 @@
 #include <nand_api.h>
 
 DECLARE_GLOBAL_DATA_PTR;
-#if 0
+#if 1
 #undef DEBUG
 #else
 #define DEBUG
@@ -761,7 +761,7 @@ int reset_button_enable(int gpio){
  	/* set gpio 27 as input*/
 	ra_and(GPIO_REG + 0x0074, ~(0x0001 << 5) );
 	if ((ra_inl(GPIO_REG + 0x0024) & 0x00000001) == 0x00000000){
-		printf("Hold GPIO %i high for 3 then release to trigger webpage to load image\n", webgpio);
+		printf("Hold GPIO %i high for 3 seconds then release to trigger webpage to load image\n", webgpio);
 		return 1;
 	}else{
 		return 0;
@@ -1807,7 +1807,7 @@ void board_init_r (gd_t *id, ulong dest_addr)
 		web_enabled = reset_button_enable(0);
 	}
 	reset_button = reset_button_status();
-	printf("GPIO %i used to trigger webpage\n", webgpio);
+	/*printf("GPIO %i used to trigger webpage\n", webgpio);*/
 	printf("GPIO %i is %s \n", webgpio, (reset_button ? "high" : "low"));
 	OperationSelect();   
 	

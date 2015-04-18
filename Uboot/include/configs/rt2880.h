@@ -29,7 +29,10 @@
 #define __CONFIG_H
 
 
+#if 0
 #define DEBUG				1
+#endif
+
 //#define ET_DEBUG
 
 #define CONFIG_RT2880_ETH		1	/* Enable built-in 10/100 Ethernet */
