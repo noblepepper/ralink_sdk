@@ -755,26 +755,37 @@ void board_init_f(ulong bootflag)
 #define ra_and(addr, value) ra_outl(addr, (ra_inl(addr) & (value)))
 #define ra_or(addr, value) ra_outl(addr, (ra_inl(addr) | (value)))
 int webgpio;
-int reset_button_enable(int gpio){
-	/* set gpio0 as input */
-	ra_and(GPIO_REG + 0x0024, 0xFFFFFFFE);
- 	/* set gpio 27 as input*/
-	ra_and(GPIO_REG + 0x0074, ~(0x0001 << 5) );
-	if ((ra_inl(GPIO_REG + 0x0024) & 0x00000001) == 0x00000000){
-		printf("Hold GPIO %i high for 3 seconds then release to trigger webpage to load image\n", webgpio);
-		return 1;
-	}else{
-		return 0;
+int gpio_trigger_enable(void){
+	if (webgpio == 0){
+		/* set gpio0 as input */
+		ra_and(GPIO_REG + 0x0024, 0xFFFFFFFE);
+		if ((ra_inl(GPIO_REG + 0x0024) & 0x00000001) == 0x00000000){
+			printf("Hold GPIO %i high for 3 seconds then release to trigger webpage to load image\n", webgpio);
+			return 1;
+		}else{
+			return 0;
+		}
+	}
+ 	if (webgpio == 27){
+		/* set gpio 27 as input*/
+		ra_and(GPIO_REG + 0x0074, ~(0x0001 << 5) );
+		if ((ra_inl(GPIO_REG + 0x0074) & (0x00000001 << 5)) == 0x00000000){
+			printf("Hold GPIO %i high for 3 seconds then release to trigger webpage to load image\n", webgpio);
+			return 1;
+		}else{
+			return 0;
+		}
 	}
 }	
-int reset_button_status(void){
+
+int gpio_trigger_status(void){
 
 /*	if (ra_inl(GPIO_REG + 0x0020) & 0x0001 == 0x00000001){
 		return 1;
 	}*/
 /*	if ((((ra_inl(GPIO_REG + 0x0070) & (0x0001 << 5))  >> 5) == 0x00000001) || (ra_inl(GPIO_REG + 0x0020) & 0x0001 == 0x00000001))*/
 	if (webgpio == 0){
-		if ( (ra_inl(GPIO_REG + 0x0020) & 0x0001 == 0x00000001) ){
+		if ( ((ra_inl(GPIO_REG + 0x0020) & 0x0001) == 0x00000001) ){
 			return 1;
 		}
 	}else if (webgpio == 27){
@@ -1793,25 +1804,16 @@ void board_init_r (gd_t *id, ulong dest_addr)
 	    s = getenv ("bootdelay");
 	    timer1 = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_BOOTDELAY;
 	}
-	int web_enabled, reset_button, threeseconds = 0, web_timer = 0;
+	int web_enabled, went_high = 0, went_low =0, gpio_trigger = 0, threeseconds = 0, web_timer = 0;
 	{
 	    char * s;
 	    s = getenv ("webgpio");
 	    webgpio = s ? (int)simple_strtol(s, NULL, 10) : CONFIG_WEBGPIO;
 	}
-
-	
-	if (webgpio == 27){
-		web_enabled = reset_button_enable(0);
-	}else{
-		web_enabled = reset_button_enable(0);
-	}
-	reset_button = reset_button_status();
-	/*printf("GPIO %i used to trigger webpage\n", webgpio);*/
-	printf("GPIO %i is %s \n", webgpio, (reset_button ? "high" : "low"));
+	web_enabled = gpio_trigger_enable();
+/*	gpio_trigger = gpio_trigger_status();*/
+	printf("GPIO %i is %s \n", webgpio, (gpio_trigger ? "high" : "low"));
 	OperationSelect();   
-	
-
 
 	while (timer1 > 0) {
 		--timer1;
@@ -1825,23 +1827,36 @@ void board_init_r (gd_t *id, ulong dest_addr)
 				printf("\n\rYou chose %c\n\n", BootType);
 				break;
 			}
-			if (reset_button_status() != reset_button){
-				printf("GPIO %i went %s\n", webgpio, reset_button ? "low" : "high");
-
-				reset_button = (reset_button == 0) ? 1 : 0;
+			web_timer++;
+			if (gpio_trigger_status() != gpio_trigger){
+				printf("GPIO %i went %s\n", webgpio, gpio_trigger ? "low" : "high");
+				if (gpio_trigger == 0){
+					went_high = web_timer;
+				}else{
+					went_low = web_timer;
+				}
+				if ( ((went_low - went_high) >= 300) && ((went_low - went_high) <= 500  )){
+					BootType = '8';
+					break;
+				}
+				if ( ((went_low - went_high) >= 700) && ((went_low - went_high) <= 900  )){
+					BootType = '1';
+					break;
+				}
+				gpio_trigger = (gpio_trigger == 0) ? 1 : 0;
 			}
-			if (reset_button == 1 && web_enabled){
+			/*if (gpio_trigger == 1 && web_enabled){
 				web_timer += 1;
 				if (web_timer == 300){
-					printf("release GPIO %i now\n", webgpio);
+					printf("release GPIO %i now to trigger webpage\n", webgpio);
 					threeseconds = 1;
 				}
 			}
-			if (reset_button == 0) web_timer = 0;
-			if (reset_button == 0 && threeseconds == 1 && web_timer <= 500){
+			if (gpio_trigger == 0) web_timer = 0;
+			if (gpio_trigger == 0 && threeseconds == 1 && web_timer <= 500){
 				BootType = '8';
 				break;
-			}		
+			}*/		
 			udelay (10000);
 		}
 		printf ("\b\b\b%2d ", timer1);
