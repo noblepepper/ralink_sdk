@@ -1,3 +1,9 @@
+compile with:
+
+export PATH=$PATH:<YOUR OPENWRT DIRECTORY>staging_dir/toolchain-mipsel_24kec+dsp_gcc-4.8-linaro_uClibc-0.9.33.2/bin/
+make CC=mipsel-openwrt-linux-uclibc-gcc LD=mipsel-openwrt-linux-uclibc-ld
+
+
 
 This is a demo implementation of a Linux command line tool to access
 the U-Boot's environment variables.
