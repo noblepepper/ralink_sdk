@@ -754,7 +754,7 @@ void board_init_f(ulong bootflag)
 #define ra_outl(addr, value)  (*(volatile u32 *)(addr) = (value))
 #define ra_and(addr, value) ra_outl(addr, (ra_inl(addr) & (value)))
 #define ra_or(addr, value) ra_outl(addr, (ra_inl(addr) | (value)))
-int webgpio;
+int webgpio, no_prompts = 0;
 int gpio_trigger_enable(void){
 	if (webgpio == 0){
 		/* set gpio0 as input */
@@ -842,9 +842,11 @@ int tftp_config(int type, char *argv[])
 	memcpy(default_ip, s, strlen(s));
 
 	printf("(%s) ", devip);
-	input_value(devip);
+	if (no_prompts != 1){
+		input_value(devip);
+	}
 	setenv("ipaddr", devip);
-	if (strcmp(default_ip, devip) != 0)
+	if (strcmp(default_ip, devip) != 1)
 		modifies++;
 
 	printf("\tInput server IP ");
@@ -854,7 +856,9 @@ int tftp_config(int type, char *argv[])
 	memcpy(default_ip, s, strlen(s));
 
 	printf("(%s) ", srvip);
-	input_value(srvip);
+	if (no_prompts != 1){
+		input_value(srvip);
+	}
 	setenv("serverip", srvip);
 	if (strcmp(default_ip, srvip) != 0)
 		modifies++;
@@ -913,7 +917,9 @@ int tftp_config(int type, char *argv[])
 		memcpy(default_file, s, strlen(s));
 	}
 	printf("(%s) ", file);
-	input_value(file);
+	if (no_prompts != 1){
+		input_value(file);
+	}
 	if (file == NULL)
 		return 1;
 	filename_copy (argv[2], file, sizeof(file));
@@ -1841,6 +1847,7 @@ void board_init_r (gd_t *id, ulong dest_addr)
 				}
 				if ( ((went_low - went_high) >= 700) && ((went_low - went_high) <= 900  )){
 					BootType = '1';
+					no_prompts = 1;
 					break;
 				}
 				gpio_trigger = (gpio_trigger == 0) ? 1 : 0;
@@ -1894,9 +1901,11 @@ void board_init_r (gd_t *id, ulong dest_addr)
 			printf("   \n%d: System Load Linux Kernel then write to Flash via TFTP. \n", SEL_LOAD_LINUX_WRITE_FLASH);
 			printf(" Warning!! Erase Linux in Flash then burn new one. Are you sure?(Y/N)\n");
 			confirm = getc();
-			if (confirm != 'y' && confirm != 'Y') {
-				printf(" Operation terminated\n");
-				break;
+			if (no_prompts == 0){
+				if (confirm != 'y' && confirm != 'Y') {
+					printf(" Operation terminated\n");
+					break;
+				}
 			}
 			tftp_config(SEL_LOAD_LINUX_WRITE_FLASH, argv);
 			argc= 3;
