@@ -76,17 +76,8 @@ static uchar obsolete_flag = 0;
 #define MK_STR(x)	XMK_STR(x)
 
 static uchar default_environment[] = {
-#if defined(CONFIG_BOOTARGS)
-	"bootargs=" CONFIG_BOOTARGS "\0"
-#endif
 #if defined(CONFIG_BOOTCOMMAND)
 	"bootcmd=" CONFIG_BOOTCOMMAND "\0"
-#endif
-#if defined(CONFIG_RAMBOOTCOMMAND)
-	"ramboot=" CONFIG_RAMBOOTCOMMAND "\0"
-#endif
-#if defined(CONFIG_NFSBOOTCOMMAND)
-	"nfsboot=" CONFIG_NFSBOOTCOMMAND "\0"
 #endif
 #if defined(CONFIG_BOOTDELAY) && (CONFIG_BOOTDELAY >= 0)
 	"bootdelay=" MK_STR (CONFIG_BOOTDELAY) "\0"
@@ -94,59 +85,59 @@ static uchar default_environment[] = {
 #if defined(CONFIG_BAUDRATE) && (CONFIG_BAUDRATE >= 0)
 	"baudrate=" MK_STR (CONFIG_BAUDRATE) "\0"
 #endif
-#ifdef	CONFIG_LOADS_ECHO
-	"loads_echo=" MK_STR (CONFIG_LOADS_ECHO) "\0"
-#endif
 #ifdef	CONFIG_ETHADDR
 	"ethaddr=" MK_STR (CONFIG_ETHADDR) "\0"
 #endif
-#ifdef	CONFIG_ETH1ADDR
-	"eth1addr=" MK_STR (CONFIG_ETH1ADDR) "\0"
-#endif
-#ifdef	CONFIG_ETH2ADDR
-	"eth2addr=" MK_STR (CONFIG_ETH2ADDR) "\0"
-#endif
-#ifdef	CONFIG_ETH3ADDR
-	"eth3addr=" MK_STR (CONFIG_ETH3ADDR) "\0"
-#endif
-#ifdef	CONFIG_ETHPRIME
-	"ethprime=" CONFIG_ETHPRIME "\0"
-#endif
 #ifdef	CONFIG_IPADDR
-	"ipaddr=" MK_STR (CONFIG_IPADDR) "\0"
+	"ipaddr=" CONFIG_IPADDR "\0"
 #endif
 #ifdef	CONFIG_SERVERIP
-	"serverip=" MK_STR (CONFIG_SERVERIP) "\0"
+	"serverip=" CONFIG_SERVERIP "\0"
 #endif
-#ifdef	CFG_AUTOLOAD
-	"autoload=" CFG_AUTOLOAD "\0"
+#if defined(CONFIG_RAMARGS)
+	"ramargs=" CONFIG_RAMARGS "\0"
 #endif
-#ifdef	CONFIG_ROOTPATH
-	"rootpath=" MK_STR (CONFIG_ROOTPATH) "\0"
+#if defined(CONFIG_ADDIP)
+	"addip=" CONFIG_ADDIP "\0"
 #endif
-#ifdef	CONFIG_GATEWAYIP
-	"gatewayip=" MK_STR (CONFIG_GATEWAYIP) "\0"
+#if defined(CONFIG_ADDMISC)
+	"addmisc=" CONFIG_ADDMISC "\0"
 #endif
-#ifdef	CONFIG_NETMASK
-	"netmask=" MK_STR (CONFIG_NETMASK) "\0"
+#ifdef	CONFIG_FLASH_SELF
+	"flash_self=" CONFIG_FLASH_SELF "\0"
 #endif
-#ifdef	CONFIG_HOSTNAME
-	"hostname=" MK_STR (CONFIG_HOSTNAME) "\0"
+#ifdef	CONFIG_KERNEL_ADDR
+	"kernel_addr=" CONFIG_KERNEL_ADDR "\0"
 #endif
-#ifdef	CONFIG_BOOTFILE
-	"bootfile=" MK_STR (CONFIG_BOOTFILE) "\0"
+#ifdef	CONFIG_U_BOOT
+	"u-boot=" CONFIG_U_BOOT "\0"
 #endif
-#ifdef	CONFIG_LOADADDR
-	"loadaddr=" MK_STR (CONFIG_LOADADDR) "\0"
+#ifdef	CONFIG_LOAD
+	"load=" CONFIG_LOAD "\0"
 #endif
-#ifdef	CONFIG_PREBOOT
-	"preboot=" CONFIG_PREBOOT "\0"
+#ifdef	CONFIG_U_B
+	"u_b=" CONFIG_U_B "\0"
 #endif
-#ifdef	CONFIG_CLOCKS_IN_MHZ
-	"clocks_in_mhz=" "1" "\0"
+#ifdef	CONFIG_LOADFS
+	"loadfs=" CONFIG_LOADFS "\0"
 #endif
-#if defined(CONFIG_PCI_BOOTDELAY) && (CONFIG_PCI_BOOTDELAY > 0)
-	"pcidelay=" MK_STR (CONFIG_PCI_BOOTDELAY) "\0"
+#ifdef	CONFIG_U_FS
+	"u_fs=" CONFIG_U_FS "\0"
+#endif
+#ifdef	CONFIG_TEST_TFTP
+	"test_tftp=" CONFIG_TEST_TFTP "\0"
+#endif
+#ifdef	CONFIG_STDIN
+	"stdin=" CONFIG_STDIN "\0"
+#endif
+#ifdef	CONFIG_STDOUT
+	"stdout=" CONFIG_STDOUT "\0"
+#endif
+#ifdef	CONFIG_STDERR
+	"stderr=" CONFIG_STDERR "\0"
+#endif
+#ifdef	CONFIG_ETHACT
+	"ethact=" CONFIG_ETHACT "\0"
 #endif
 #ifdef  CONFIG_EXTRA_ENV_SETTINGS
 	CONFIG_EXTRA_ENV_SETTINGS

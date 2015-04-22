@@ -39,13 +39,27 @@
 #define ENV2_SIZE         0x4000
 #define DEVICE2_ESIZE     0x4000
 
+#define CONFIG_BOOTDELAY	1	/* autoboot after 1 second	*/
+#define CONFIG_BOOTCOMMAND	"tftp"							
 #define CONFIG_BAUDRATE		57600
-#define CONFIG_BOOTDELAY	5	/* autoboot after 5 seconds	*/
-#define CONFIG_BOOTCOMMAND							\
-	"bootp; " 								\
-	"setenv bootargs root=/dev/nfs nfsroot=$(serverip):$(rootpath) " 	\
-	"ip=$(ipaddr):$(serverip):$(gatewayip):$(netmask):$(hostname)::off; " 	\
-	"bootm"
+#define	CONFIG_ETHADDR		"00:AA:BB:CC:DD:10"
+#define	CONFIG_IPADDR		"10.10.10.123"
+#define	CONFIG_SERVERIP		"10.10.10.3"
+#define CONFIG_RAMARGS		"setenv bootargs root=/dev/ram rw"
+#define CONFIG_ADDIP		"setenv bootargs $(bootargs) ip=$(ipaddr):$(serverip):$(gatewayip):$(netmask):$(hostname):$(netdev):off"
+#define CONFIG_ADDMISC		"setenv bootargs $(bootargs) console=ttyS0,$(baudrate) ethaddr=$(ethaddr) panic=1"
+#define CONFIG_FLASH_SELF	"run ramargs addip addmisc;bootm $(kernel_addr) $(ramdisk_addr)"
+#define CONFIG_KERNEL_ADDR	"BFC40000"
+#define CONFIG_U_BOOT		"u-boot.bin"
+#define	CONFIG_LOAD		"tftp 8A100000 $(u-boot)"
+#define	CONFIG_U_B		"protect off 1:0-1;era 1:0-1;cp.b 8A100000 BC400000 $(filesize)"
+#define	CONFIG_LOADFS		"tftp 8A100000 root.cramfs"
+#define	CONFIG_U_FS		"era bc540000 bc83ffff;cp.b 8A100000 BC540000 $(filesize)"
+#define	CONFIG_TEST_TFTP	"tftp 8A100000 root.cramfs;run test_tftp"
+#define	CONFIG_STDIN		"serial"
+#define	CONFIG_STDOUT		"serial"
+#define	CONFIG_STDERR		"serial"
+#define	CONFIG_ETHACT		"Eth0 (10/100-M)"
 
 extern		void  fw_printenv(int argc, char *argv[]);
 extern unsigned char *fw_getenv  (unsigned char *name);
