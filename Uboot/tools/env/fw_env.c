@@ -601,12 +601,18 @@ static int env_init (void)
 
 	crc1_ok = ((crc1 = crc32 (0, environment.data, ENV_SIZE))
 			   == environment.crc);
+	//printf("crc in flash = 0x%08x, calculated crc = 0x%08x\n", environment.crc, crc1);
 	if (!HaveRedundEnv) {
 		if (!crc1_ok) {
 			fprintf (stderr,
 				"Warning: Bad CRC, using default environment\n");
-			environment.data = default_environment;
-			free (addr1);
+		/*	environment.data = default_environment;*/
+			memset(environment.data, 0, ENV_SIZE);
+			memcpy(environment.data, default_environment, sizeof(default_environment));
+			environment.crc = crc32 (0, environment.data, ENV_SIZE);
+	//		printf("crc in flash = 0x%08x, calculated crc = 0x%08x\n", environment.crc, crc1);
+	//		printf("ENV_SIZE= %lu, sizeofdefaultenv= %lu \n", ENV_SIZE, sizeof(default_environment));
+			//free (addr1);
 		}
 	} else {
 		flag1 = environment.flags;
